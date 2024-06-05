@@ -1,0 +1,13 @@
+{
+  "name": "elegram",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "electron": "^30.0.9"
+  }
+}
