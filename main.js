@@ -1,38 +1,79 @@
-const { app, BrowserWindow, shell } = require("electron");
+const { app, BrowserWindow, shell, screen, ipcMain } = require("electron");
+const path = require("node:path");
+
+let mainWindow;
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 400,
-    height: 600,
+  const { height, width } = screen.getPrimaryDisplay().workAreaSize;
+
+  const x = parseInt(width - 200);
+  const y = parseInt(height - 100);
+
+  console.log(x, y);
+
+  mainWindow = new BrowserWindow({
+    width: 100,
+    height: 100,
     autoHideMenuBar: true,
-    x: 1510,
-    y: 460,
+    x,
+    y,
     disableAutoHideCursor: true,
+    frame: false,
     title: "Elegram",
     alwaysOnTop: true,
+    transparent: true,
+    resizable: false,
+    movable: true,
+    minimizable: false,
+    maximizable: false,
+    closable: false,
+    titleBarStyle: "customButtonsOnHover",
+    skipTaskbar: true,
     webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
       partition: "persist:your-app",
-      contextIsolation: false,
     },
   });
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: "deny" };
-  });
-  const url = "https://web.telegram.org/k";
-  mainWindow.loadURL(url);
+  mainWindow.loadFile("index.html");
 }
 
-app.on("ready", createWindow);
+app.whenReady().then(() => {
+  ipcMain.on("open-telegram", () => {
+    mainWindow.hide();
 
-app.on("window-all-closed", () => {
-  app.quit();
-});
+    const { height, width } = screen.getPrimaryDisplay().workAreaSize;
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+    const x = parseInt(width - width / 5 - width * 0.02);
+    const y = parseInt(height - height / 2 - height * 0.02);
+    const mainWindow2 = new BrowserWindow({
+      width: width / 5,
+      height: height / 2,
+      autoHideMenuBar: true,
+      x,
+      y,
+      disableAutoHideCursor: true,
+      title: "Elegram",
+      alwaysOnTop: true,
+      minimizable: false,
+      webPreferences: {
+        preload: path.join(__dirname, "preload.js"),
+        nodeIntegration: true,
+        partition: "persist:your-app",
+      },
+    });
+    mainWindow2.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: "deny" };
+    });
+    const url = "https://web.telegram.org/k";
+    mainWindow2.loadURL(url);
+
+    mainWindow2.on("close", function () {
+      mainWindow.show();
+      mainWindow2.hide();
+    });
+  });
+  createWindow();
 });

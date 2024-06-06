@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'nonce-ABC123'">
+</head>
+
+<style>
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    main {
+        width: 6rem;
+        height: 6rem;
+        border-radius: 50%;
+        background-color: blueviolet;
+        overflow: hidden;
+    }
+
+    button {
+        width: 100%;
+        height: 100%;
+        font-size: 1rem;
+        color: white;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <main>
+        <button id="btn" nonce="ABC123">Telegram</button>
+        <script nonce="ABC123">
+            document.getElementById('btn').addEventListener('click', click2);
+            function click2() {
+                window.electronAPI.openTelegram()
+            }
+        </script>
+    </main>
+</body>
+
+</html>
