@@ -9,6 +9,9 @@ const {
 const path = require("node:path");
 
 let mainWindow;
+/**
+ * @type {BrowserWindow}
+ */
 let mainWindow2;
 
 function createWindow() {
@@ -35,7 +38,7 @@ function createWindow() {
     minimizable: false,
     maximizable: false,
     closable: false,
-    titleBarStyle: "customButtonsOnHover",
+    titleBarStyle: "hidden",
     skipTaskbar: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -49,13 +52,13 @@ function createWindow() {
 
 function openTelegram() {
   mainWindow.hide();
-
+  mainWindow2?.destroy?.();
   const { height, width } = screen.getPrimaryDisplay().workAreaSize;
 
   const x = parseInt(width - width / 5 - width * 0.02);
   const y = parseInt(height - height / 2 - height * 0.02);
   mainWindow2 = new BrowserWindow({
-    width: width / 5,
+    width: width / 4,
     height: height / 2,
     autoHideMenuBar: true,
     x,
@@ -93,16 +96,18 @@ app.whenReady().then(() => {
   ipcMain.on("open-telegram", () => {
     openTelegram();
   });
-  globalShortcut.register("F4", () => {
-    if (canOpenORCanCloseTelegran) {
-      canOpenORCanCloseTelegran = false;
-      openTelegram();
-    } else {
-      canOpenORCanCloseTelegran = true;
-      mainWindow?.show?.();
-      mainWindow2?.hide?.();
-    }
-  });
+  if (!globalShortcut.isRegistered("F4")) {
+    globalShortcut.register("F4", () => {
+      if (canOpenORCanCloseTelegran) {
+        canOpenORCanCloseTelegran = false;
+        openTelegram();
+      } else {
+        canOpenORCanCloseTelegran = true;
+        mainWindow?.show?.();
+        mainWindow2?.hide?.();
+      }
+    });
+  }
 
   createWindow();
 });
