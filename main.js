@@ -77,7 +77,7 @@ function openTelegram() {
     shell.openExternal(url);
     return { action: "deny" };
   });
-  const url = "https://web.telegram.org/k";
+  const url = "https://web.telegram.org/a";
   mainWindow2.loadURL(url);
 
   mainWindow2.on("close", function () {
